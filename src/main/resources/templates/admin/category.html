@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Viewport meta tag -->
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <section>
+        <div class="container-fluid p-5 mt-5">
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-12 mb-4"> <!-- Responsive column adjustment -->
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <p class="fs-4">Add Category</p>
+                            <th:block th:if="${session.succMsg}">
+                                <p class="text-success fw-bold">[[${session.succMsg}]]</p>
+                                <th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+                            </th:block>
+                            <th:block th:if="${session.errorMsg}">
+                                <p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+                                <th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+                            </th:block>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/saveCategory" method="post" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label>Enter Category</label>
+                                    <input type="text" name="name" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" checked value="true" name="isActive" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="flexRadioDefault1">Active</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="isActive" value="false" id="flexRadioDefault2">
+                                        <label class="form-check-label" for="flexRadioDefault2">Inactive</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Upload Image</label>
+                                    <input type="file" name="file" class="form-control" accept="image/*" required>
+                                </div>
+                                <button class="btn btn-primary btn-block mt-2">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-9 col-md-8 col-sm-12"> <!-- Responsive column adjustment -->
+                    <div class="card">
+                        <div class="card-header text-center fs-4">Category Details</div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Sl No</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Image</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="cat,c:${categorys}">
+                                            <th scope="row">[[${c.count}]]</th>
+                                            <td>[[${cat.name}]]</td>
+                                            <td>[[${cat.isActive}]]</td>
+                                            <td><img th:src="@{'/img/category_img/'+${cat.imageName}}" width="50" height="50" class="img-fluid"></td>
+                                            <td>
+                                                <a th:href="@{'/admin/loadEditCategory/'+${cat.id}}" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square fa-1x"></i> Edit</a>
+                                                <a th:href="@{'/admin/deleteCategory/'+${cat.id}}" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-1x"></i> Delete</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 col-sm-12">Total Category: [[${totalElements}]]</div>
+                                <div class="col-md-8 col-sm-12">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-center">
+                                            <li class="page-item" th:classappend="${isFirst} ? 'disabled':''">
+                                                <a class="page-link" th:href="@{'/admin/category?pageNo='+${pageNo-1}}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <li th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item" th:classappend="${pageNo+1==i}?'active':''">
+                                                <a class="page-link" th:href="@{'/admin/category?pageNo='+${i-1}}">[[${i}]]</a>
+                                            </li>
+                                            <li class="page-item" th:classappend="${isLast} ? 'disabled':''">
+                                                <a class="page-link" th:href="@{'/admin/category?pageNo='+${pageNo+1}}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
